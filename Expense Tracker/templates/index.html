@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PocketLy - Expense Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+</head>
+<body>
+    <nav class="nav-bar">
+        <div class="nav-container">
+            <h1 class="nav-title">PocketLy</h1>
+            <a href="/add_expense" class="add-button">Add New Expense</a>
+        </div>
+    </nav>
+
+    <main class="main-container">
+        <!-- Summary Cards -->
+        <div class="summary-grid">
+            <div class="summary-card">
+                <h3 class="card-title">Total Expenses</h3>
+                <p class="card-value">Rs. {{ "%.2f"|format(total_amount) }}</p>
+            </div>
+            <div class="summary-card">
+                <h3 class="card-title">This Month</h3>
+                <p class="card-value">Rs. {{ "%.2f"|format(monthly_amount) }}</p>
+            </div>
+            <div class="summary-card">
+                <h3 class="card-title">Categories</h3>
+                <p class="card-value">{{ categories_count }}</p>
+            </div>
+        </div>
+
+        <!-- Expense Table -->
+        <div class="table-container">
+            <div class="table-header">
+                <h2>Recent Expenses</h2>
+            </div>
+            <table class="expense-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Category</th>
+                        <th>Amount</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if expenses %}
+                        {% for expense in expenses %}
+                        <tr>
+                            <td>{{ expense[0] }}</td>
+                            <td><span class="category-tag">{{ expense[1] }}</span></td>
+                            <td>Rs. {{ "%.2f"|format(expense[2]) }}</td>
+                            <td>{{ expense[3] }}</td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="4" style="text-align: center;">No expenses found</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+</body>
+</html>

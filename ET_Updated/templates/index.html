@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/main.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <nav class="nav-bar">
+        <div class="nav-container">
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="PocketLy Logo" class="nav-logo">
+                <h1 class="nav-title">PocketLy</h1>
+            </div>
+            <a href="{{ url_for('add_expense') }}" class="add-button">Add Expense</a>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <!-- Hidden elements for chart data -->
+        <div id="chart-data" style="display: none;" data-chart-data="{{ chart_data|tojson|safe }}"></div>
+        <div id="monthly-chart-data" style="display: none;" data-monthly-chart-data="{{ monthly_chart_data|tojson|safe }}"></div>
+
+        <!-- Summary Cards -->
+        <div class="summary-grid">
+            <div class="summary-card animate-card">
+                <h3 class="card-title">Total Expenses</h3>
+                <p class="card-value">Rs. {{ "%.2f"|format(total_amount) }}</p>
+            </div>
+            <div class="summary-card animate-card">
+                <h3 class="card-title">This Month</h3>
+                <p class="card-value">Rs. {{ "%.2f"|format(monthly_amount) }}</p>
+            </div>
+            <div class="summary-card animate-card">
+                <h3 class="card-title">Categories</h3>
+                <p class="card-value">{{ categories_count }}</p>
+            </div>
+            <div class="summary-card animate-card">
+                <h3 class="card-title">Average Expense</h3>
+                <p class="card-value">Rs. {{ "%.2f"|format(average_amount) }}</p>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <h3>Expense Distribution</h3>
+                <canvas id="categoryPieChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>Monthly Expenses</h3>
+                <canvas id="monthlyBarChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Expense Table -->
+        <div class="table-container">
+            <div class="table-header">
+                <h2 style="text-align: left; font-size: 16px;">Recent Expenses</h2>
+            </div>
+            <table class="expense-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Category</th>
+                        <th>Amount</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if expenses %}
+                        {% for expense in expenses %}
+                        <tr class="expense-row" data-id="{{ expense['id'] }}">
+                            <td>{{ expense['date'] }}</td>
+                            <td><span class="category-tag">{{ expense['category'] }}</span></td>
+                            <td>Rs. {{ "%.2f"|format(expense['amount']) }}</td>
+                            <td>{{ expense['description'] }}</td>
+                            <td>
+                                <button class="delete-btn" onclick="deleteExpense({{ expense['id']}})">Delete</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="5" style="text-align: center;">No expenses found</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+</body>
+</html>
